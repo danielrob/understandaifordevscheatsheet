@@ -122,11 +122,11 @@ const CardModal: React.FC<CardModalProps> = ({
 
       {/* Modal Content */}
       <div 
-        className="relative w-full max-w-4xl mx-6 max-h-[80vh] overflow-auto"
+        className="relative w-full max-w-4xl mx-6 max-h-[80vh] min-h-[45vh] overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`
-          rounded-2xl border-2 shadow-2xl p-8 transition-all duration-300
+          rounded-2xl border-2 shadow-2xl p-8 transition-all duration-300 min-h-[45vh] flex flex-col
           ${getCardColor(currentIndex)}
         `}>
           {/* Close Button */}
@@ -140,20 +140,21 @@ const CardModal: React.FC<CardModalProps> = ({
           </button>
 
           {/* Content */}
-          <div className="space-y-6">
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="space-y-6">
+              {/* Title */}
+              <h2 className="text-3xl font-whimsy font-bold text-gray-800 dark:text-gray-100 leading-tight mt-2">
+                {item.title}
+              </h2>
 
-            {/* Title */}
-            <h2 className="text-3xl font-whimsy font-bold text-gray-800 dark:text-gray-100 leading-tight mt-2">
-              {item.title}
-            </h2>
-
-            {/* Content */}
-            <div className="text-base text-gray-700 dark:text-gray-300 font-content leading-relaxed">
-              <MarkdownRenderer content={item.content} />
+              {/* Content */}
+              <div className="text-base text-gray-700 dark:text-gray-300 font-content leading-relaxed">
+                <MarkdownRenderer content={item.content} />
+              </div>
             </div>
 
-            {/* Progress Indicator */}
-            <div className="flex items-center justify-center space-x-2 pt-4">
+            {/* Progress Indicator - Always at bottom */}
+            <div className="flex items-center justify-center space-x-2 pt-6 mt-auto">
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 {currentIndex + 1} of {totalItems}
               </span>
