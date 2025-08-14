@@ -9,22 +9,25 @@ interface CheatSheetCardProps {
   onExpand: () => void;
   isHovered: boolean;
   onHover: (hovered: boolean) => void;
+  index: number;
 }
 
 const CheatSheetCard: React.FC<CheatSheetCardProps> = ({ 
   item, 
   onExpand, 
   isHovered, 
-  onHover 
+  onHover,
+  index
 }) => {
-  const getCardColor = (type: string) => {
-    switch (type) {
-      case 'concept':
+  const getCardColor = (index: number) => {
+    const colorIndex = index % 3;
+    switch (colorIndex) {
+      case 0:
         return 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-700';
-      case 'technical':
-        return 'bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 border-blue-200 dark:border-blue-700';
-      case 'framework':
-        return 'bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-700';
+      case 1:
+        return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700';
+      case 2:
+        return 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-700';
       default:
         return 'bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 border-gray-200 dark:border-gray-700';
     }
@@ -48,7 +51,7 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
       className={`
         relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ease-in-out
         hover:shadow-lg hover:scale-[1.02] transform
-        ${getCardColor(item.type)}
+        ${getCardColor(index)}
         ${isHovered ? 'shadow-lg scale-[1.02]' : 'shadow-sm'}
       `}
       onClick={onExpand}
@@ -76,15 +79,9 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
         </svg>
       </div>
 
-      {/* Type Badge */}
-      <div className="mb-3">
-        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(item.type)}`}>
-          {item.type}
-        </span>
-      </div>
 
       {/* Title */}
-      <h3 className="text-lg font-whimsy font-bold text-gray-800 dark:text-gray-100 mb-3 leading-tight">
+      <h3 className="text-lg font-whimsy font-bold text-gray-800 dark:text-gray-100 mb-4 mt-2 leading-tight">
         {item.title}
       </h3>
 

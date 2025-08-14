@@ -58,16 +58,17 @@ const CardModal: React.FC<CardModalProps> = ({
 
   if (!isOpen) return null;
 
-  const getCardColor = (type: string) => {
-    switch (type) {
-      case 'concept':
-        return 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-700';
-      case 'technical':
-        return 'bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 border-blue-200 dark:border-blue-700';
-      case 'framework':
-        return 'bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-700';
+  const getCardColor = (index: number) => {
+    const colorIndex = index % 3;
+    switch (colorIndex) {
+      case 0:
+        return 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900 dark:to-emerald-900 border-green-200 dark:border-green-700';
+      case 1:
+        return 'bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700';
+      case 2:
+        return 'bg-purple-50 dark:bg-purple-900 border-purple-200 dark:border-purple-700';
       default:
-        return 'bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 border-gray-200 dark:border-gray-700';
+        return 'bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700';
     }
   };
 
@@ -126,7 +127,7 @@ const CardModal: React.FC<CardModalProps> = ({
       >
         <div className={`
           rounded-2xl border-2 shadow-2xl p-8 transition-all duration-300
-          ${getCardColor(item.type)}
+          ${getCardColor(currentIndex)}
         `}>
           {/* Close Button */}
           <button
@@ -140,15 +141,9 @@ const CardModal: React.FC<CardModalProps> = ({
 
           {/* Content */}
           <div className="space-y-6">
-            {/* Type Badge */}
-            <div>
-              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(item.type)}`}>
-                {item.type}
-              </span>
-            </div>
 
             {/* Title */}
-            <h2 className="text-3xl font-whimsy font-bold text-gray-800 dark:text-gray-100 leading-tight">
+            <h2 className="text-3xl font-whimsy font-bold text-gray-800 dark:text-gray-100 leading-tight mt-2">
               {item.title}
             </h2>
 

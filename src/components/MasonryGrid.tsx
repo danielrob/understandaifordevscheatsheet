@@ -52,18 +52,21 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ items, onCardExpand }) => {
       <div className={`grid gap-6`} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
         {columnArrays.map((columnItems, columnIndex) => (
           <div key={columnIndex} className="space-y-6">
-            {columnItems.map((item) => (
-              <CheatSheetCard
-                key={item.id}
-                item={item}
-                onExpand={() => {
-                  const originalIndex = items.findIndex(i => i.id === item.id);
-                  onCardExpand(item, originalIndex);
-                }}
-                isHovered={hoveredCard === item.id}
-                onHover={(hovered) => setHoveredCard(hovered ? item.id : null)}
-              />
-            ))}
+            {columnItems.map((item) => {
+              const originalIndex = items.findIndex(i => i.id === item.id);
+              return (
+                <CheatSheetCard
+                  key={item.id}
+                  item={item}
+                  index={originalIndex}
+                  onExpand={() => {
+                    onCardExpand(item, originalIndex);
+                  }}
+                  isHovered={hoveredCard === item.id}
+                  onHover={(hovered) => setHoveredCard(hovered ? item.id : null)}
+                />
+              );
+            })}
           </div>
         ))}
       </div>
