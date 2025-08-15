@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface MarkdownRendererProps {
   content: string;
@@ -8,7 +9,7 @@ interface MarkdownRendererProps {
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClick, onImageClick }) => {
   const renderMarkdown = (text: string): JSX.Element => {
-    const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|!\[[^\]]*\]\([^)]+\)|\n\n)/g);
+    const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[!\[[^\]]*\]\([^)]+\)\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|!\[[^\]]*\]\([^)]+\)|\n\n)/g);
 
     return (
       <>
@@ -37,15 +38,43 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClic
             );
           } else if (part === '\n\n') {
             return <br key={index} className="block mb-3" />;
+          } else if (part.match(/\[!\[[^\]]*\]\([^)]+\)\]\(([^)]+)\)/)) {
+            // Handle clickable images: [![alt](src)](url)
+            const match = part.match(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/);
+            if (match) {
+              const [, alt, src, url] = match;
+              return (
+                <div key={index} className="my-6 flex justify-center">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="block hover:opacity-90 transition-opacity"
+                  >
+                    <Image
+                      src={src}
+                      alt={alt}
+                      width={800}
+                      height={400}
+                      className="max-w-full h-auto rounded-lg shadow-md border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg transition-shadow"
+                    />
+                  </a>
+                </div>
+              );
+            }
+            return <span key={index}>{part}</span>;
           } else if (part.match(/!\[[^\]]*\]\([^)]+\)/)) {
             const match = part.match(/!\[([^\]]*)\]\(([^)]+)\)/);
             if (match) {
               const [, alt, src] = match;
               return (
                 <div key={index} className="my-6 flex justify-center">
-                  <img
+                  <Image
                     src={src}
                     alt={alt}
+                    width={800}
+                    height={400}
                     onClick={() => onImageClick && onImageClick(src, alt)}
                     className="max-w-full h-auto rounded-lg shadow-md border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg transition-shadow"
                   />
@@ -55,23 +84,41 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClic
             return <span key={index}>{part}</span>;
           } else if (part.match(/\[([^\]]+)\]\(([^)]+)\)/)) {
             const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
-            if (match && onLinkClick) {
-              const [, linkText, cardId] = match;
-              return (
-                <button
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onLinkClick(cardId);
-                  }}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 decoration-dotted decoration-1 underline decoration-gray-300 dark:decoration-gray-600 hover:decoration-blue-500 underline-offset-2 transition-all duration-200"
-                >
-                  {linkText}
-                </button>
-              );
-            } else {
-              return <span key={index}>{part}</span>;
+            if (match) {
+              const [, linkText, linkUrl] = match;
+              // Check if it's an external link (starts with http/https)
+              if (linkUrl.startsWith('http://') || linkUrl.startsWith('https://')) {
+                return (
+                  <a
+                    key={index}
+                    href={linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 decoration-dotted decoration-1 underline decoration-gray-300 dark:decoration-gray-600 hover:decoration-blue-500 underline-offset-2 transition-all duration-200"
+                  >
+                    {linkText}
+                  </a>
+                );
+              } else if (onLinkClick) {
+                // Internal link to another card
+                return (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onLinkClick(linkUrl);
+                    }}
+                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 decoration-dotted decoration-1 underline decoration-gray-300 dark:decoration-gray-600 hover:decoration-blue-500 underline-offset-2 transition-all duration-200"
+                  >
+                    {linkText}
+                  </button>
+                );
+              } else {
+                return <span key={index}>{part}</span>;
+              }
             }
+            return <span key={index}>{part}</span>;
           } else {
             return <span key={index}>{part}</span>;
           }

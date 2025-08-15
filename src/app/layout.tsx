@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Understand AI for Devs - Cheat Sheet",
   description: "A comprehensive cheat sheet for developers to understand AI concepts, tools, and practices",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

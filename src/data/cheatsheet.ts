@@ -8,7 +8,7 @@ export const cheatSheetData: CheatSheetItem[] = [
   {
     id: 'basic-models',
     title: 'Basic models',
-    content: `Original "ChatGPT moment" style models. "Quick answer" models. Input text or media and it directly outputs text or media. \n\n **Important:** All of the modern AI tooling/applications is built on cycles of text in/text out—there is **no** magic beyond this! See [Architecture of AI applications](ai-app-architecture). \n\n Single-shot, multi-shot prompting (see [prompt engineering](prompt-engineering)). \n\n How do they work? See [Models & Inference](models-inference).\n\n  See also: [Reasoning models](reasoning-models), [Model Systems](model-systems)`,
+    content: `Original "ChatGPT moment" style models. "Quick answer" models. Input text or media and it directly outputs text or media. \n\n **Important:** All of the modern AI tooling/applications is built on cycles of text in/text out—there is **no** magic beyond this! See [Architecture of AI applications](ai-app-architecture). \n\n Working with basic models: Single-shot, multi-shot prompting (see [prompt engineering](prompt-engineering)). \n\n How do they work? See [Models & Inference](models-inference).\n\n  See also: [Reasoning models](reasoning-models), [Model Systems](model-systems)`,
   },
   {
     id: 'models-inference',
@@ -94,7 +94,7 @@ export const cheatSheetData: CheatSheetItem[] = [
   {
     id: 'mcp',
     title: 'Model Context Protocol (MCP)',
-    content: `A standard mechanism utilisable by **programs** to provide context to AI models.
+    content: `[A standard mechanism](https://modelcontextprotocol.io/) utilisable by **programs** to provide context to AI models.
 
 A program might accept configurations of MCP servers through some JSON file. The program connects to those MCP servers which state "I have these tools, documents, & suggested prompts". The program can then decide to inject that retrieved information into the context when doing model calls. For example: \`tools: [{ "name": "mcp_server_a_tool_name", ....}]\`.
 
@@ -105,7 +105,7 @@ From the end user perspective, MCP is a kind of standardised [context engineerin
   {
     id: 'dev-agent-features',
     title: 'Features that distinguish Dev Agents',
-    content: `- system prompt. See e.g. [bolt.new's prompts.ts]()
+    content: `- system prompt. See e.g. [bolt.new's prompts.ts](https://github.com/stackblitz/bolt.new/blob/main/app/lib/.server/llm/prompts.ts) and [GitHub Copilots agent instructions](https://github.com/microsoft/vscode-copilot-chat/blob/main/src/extension/prompts/node/agent/agentInstructions.tsx).
 - built-in tools - browser, etc.
 - Context gathering approach - user driven, RAG using codebase indexes, model driven tool calling based discovery.
 - Model selection?
@@ -141,18 +141,36 @@ From the end user perspective, MCP is a kind of standardised [context engineerin
   },
   {
     id: 'model-sizes',
-    title: 'Model sizes',
+    title: 'Model sizes & cost',
     content: `- Large models contain greater obscure domain knowledge.
-- Smaller models otherwise contain similar levels of "intelligence" for tasks like coding etc.`,
+- Smaller models otherwise contain similar levels of "intelligence" for tasks like coding etc.
+
+- Cost does not necessarily imply more intelligent.
+
+[![Performance vs Cost](/performance-vs-cost.png)](https://skatebench.t3.gg/)
+
+*Performance vs cost comparison across different models - click to visit* [Skatebench](https://skatebench.t3.gg/) *for interactive analysis*`,
   },
   {
     id: 'calling-ai-models',
     title: 'Calling AI models programatically',
-    content: 'Can be done by each vendors API, or via universal SDKs like ai-sdk - be warned: vendor differences still necessarily leak through!',
+    content: 'Can be done by each vendors API, or via universal SDKs like [ai-sdk](https://ai-sdk.dev/) - be warned: vendor differences still necessarily leak through!',
   },
     {
     id: 'ai-app-architecture',
     title: 'Architecture of AI applications',
     content: `![AI Application Architecture](/aiapparchitecture.png)`,
+  },
+  {
+    id: 'vibe-coding',
+    title: 'Vibe Coding',
+    content: `In its truest form, the term "vibe coding" means creating software without ever looking at the code. However, it has commonly come to refer to simply heavily AI-assisted coding.
+
+The transition to AI-assisted coding for devs:
+
+| easier | 👎 |
+| more effective | 👍 |
+| more enjoyable | ❓(👍/👎) |
+| faster | usually: 👍 (sometimes: 👎) |`,
   },
 ];

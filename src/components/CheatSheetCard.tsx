@@ -13,10 +13,10 @@ interface CheatSheetCardProps {
   onLinkClick?: (cardId: string) => void;
 }
 
-const CheatSheetCard: React.FC<CheatSheetCardProps> = ({ 
-  item, 
-  onExpand, 
-  isHovered, 
+const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
+  item,
+  onExpand,
+  isHovered,
   onHover,
   index,
   onLinkClick
@@ -61,7 +61,7 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
       onMouseLeave={() => onHover(false)}
     >
       {/* Expand Icon */}
-      <div 
+      <div
         className={`absolute top-3 right-3 transition-opacity duration-200 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}
@@ -81,7 +81,6 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
         </svg>
       </div>
 
-
       {/* Title */}
       <h3 className="text-lg font-whimsy font-bold text-gray-800 dark:text-gray-100 mb-4 mt-2 leading-tight">
         {item.title}
@@ -89,8 +88,47 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
 
       {/* Content Preview */}
       <div className="text-sm text-gray-700 dark:text-gray-300 font-content line-clamp-4">
-        <MarkdownRenderer 
-          content={item.content.substring(0, 200) + (item.content.length > 200 ? '...' : '')} 
+        <MarkdownRenderer
+          content={(() => {
+            if (item.content.length <= 300) return item.content;
+
+            // Find a safe place to truncate that doesn't break markdown links
+            let truncateAt = 200;
+            const content = item.content;
+
+            // Look for complete markdown links by finding the last complete ](url) pattern
+            const linkPattern = /\]\([^)]*\)/g;
+            let lastCompleteLink = -1;
+            let match;
+
+            while ((match = linkPattern.exec(content.substring(0, truncateAt + 50))) !== null) {
+              if (match.index + match[0].length <= truncateAt + 50) {
+                lastCompleteLink = match.index + match[0].length;
+              }
+            }
+
+            // If we found a complete link near our truncation point, use that
+            if (lastCompleteLink > truncateAt - 100 && lastCompleteLink <= truncateAt + 50) {
+              truncateAt = lastCompleteLink;
+            } else {
+              // Fall back to finding a safe break point
+              const safeBreaks = ['. ', '\n- ', '\n\n'];
+              let bestBreak = truncateAt;
+
+              for (const breakPattern of safeBreaks) {
+                const lastBreak = content.lastIndexOf(breakPattern, truncateAt);
+                if (lastBreak > truncateAt - 100) {
+                  bestBreak = Math.min(bestBreak, lastBreak + breakPattern.length);
+                }
+              }
+
+              if (bestBreak < truncateAt) {
+                truncateAt = bestBreak;
+              }
+            }
+
+            return content.substring(0, truncateAt) + (content.length > truncateAt ? '...' : '');
+          })()}
           onLinkClick={onLinkClick}
         />
       </div>

@@ -184,7 +184,7 @@ function LoadingFallback() {
           🤖 Understand AI for Devs
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          A developer&apos;s cheat sheet to understanding AI concepts, tools, and best practices
+          A developer&apos;s cheat sheet to understanding AI concepts & tools
         </p>
       </header>
 
