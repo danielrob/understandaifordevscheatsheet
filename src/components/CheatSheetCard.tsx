@@ -10,6 +10,7 @@ interface CheatSheetCardProps {
   isHovered: boolean;
   onHover: (hovered: boolean) => void;
   index: number;
+  onLinkClick?: (cardId: string) => void;
 }
 
 const CheatSheetCard: React.FC<CheatSheetCardProps> = ({ 
@@ -17,7 +18,8 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
   onExpand, 
   isHovered, 
   onHover,
-  index
+  index,
+  onLinkClick
 }) => {
   const getCardColor = (index: number) => {
     const colorIndex = index % 3;
@@ -87,7 +89,10 @@ const CheatSheetCard: React.FC<CheatSheetCardProps> = ({
 
       {/* Content Preview */}
       <div className="text-sm text-gray-700 dark:text-gray-300 font-content line-clamp-4">
-        <MarkdownRenderer content={item.content.substring(0, 200) + (item.content.length > 200 ? '...' : '')} />
+        <MarkdownRenderer 
+          content={item.content.substring(0, 200) + (item.content.length > 200 ? '...' : '')} 
+          onLinkClick={onLinkClick}
+        />
       </div>
     </div>
   );

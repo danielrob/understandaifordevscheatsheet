@@ -1,40 +1,107 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { cheatSheetData, CheatSheetItem } from '@/data/cheatsheet';
 import MasonryGrid from '@/components/MasonryGrid';
 import CardModal from '@/components/CardModal';
 import DarkModeToggle from '@/components/DarkModeToggle';
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedCard, setSelectedCard] = useState<CheatSheetItem | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
+
+  // Initialize state from URL on component mount
+  useEffect(() => {
+    const cardId = searchParams.get('card');
+    if (cardId) {
+      const cardIndex = cheatSheetData.findIndex(item => item.id === cardId);
+      if (cardIndex !== -1) {
+        const card = cheatSheetData[cardIndex];
+        setSelectedCard(card);
+        setSelectedIndex(cardIndex);
+        setIsModalOpen(true);
+      }
+    }
+  }, [searchParams]);
+
+  const updateURL = (cardId: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (cardId) {
+      params.set('card', cardId);
+    } else {
+      params.delete('card');
+    }
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   const handleCardExpand = (item: CheatSheetItem, index: number) => {
     setSelectedCard(item);
     setSelectedIndex(index);
     setIsModalOpen(true);
+    setNavigationHistory([]); // Clear navigation history on direct card expansion
+    updateURL(item.id);
+  };
+
+  const handleLinkClick = (cardId: string) => {
+    const cardIndex = cheatSheetData.findIndex(item => item.id === cardId);
+    if (cardIndex !== -1) {
+      const card = cheatSheetData[cardIndex];
+      // Add current card to navigation history when following a link
+      if (selectedCard && selectedCard.id !== cardId) {
+        setNavigationHistory(prev => [...prev, selectedCard.id]);
+      }
+      setSelectedCard(card);
+      setSelectedIndex(cardIndex);
+      setIsModalOpen(true);
+      updateURL(cardId);
+    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedCard(null);
+    setNavigationHistory([]);  // Clear navigation history when closing modal
+    updateURL(null);
+  };
+
+  const handleBackClick = () => {
+    if (navigationHistory.length > 0) {
+      const previousCardId = navigationHistory[navigationHistory.length - 1];
+      const cardIndex = cheatSheetData.findIndex(item => item.id === previousCardId);
+      if (cardIndex !== -1) {
+        const card = cheatSheetData[cardIndex];
+        setSelectedCard(card);
+        setSelectedIndex(cardIndex);
+        setNavigationHistory(prev => prev.slice(0, -1)); // Remove last item from history
+        updateURL(previousCardId);
+      }
+    }
   };
 
   const handleNext = () => {
     if (selectedIndex < cheatSheetData.length - 1) {
       const nextIndex = selectedIndex + 1;
+      const nextCard = cheatSheetData[nextIndex];
       setSelectedIndex(nextIndex);
-      setSelectedCard(cheatSheetData[nextIndex]);
+      setSelectedCard(nextCard);
+      setNavigationHistory([]); // Clear navigation history on standard navigation
+      updateURL(nextCard.id);
     }
   };
 
   const handlePrevious = () => {
     if (selectedIndex > 0) {
       const prevIndex = selectedIndex - 1;
+      const prevCard = cheatSheetData[prevIndex];
       setSelectedIndex(prevIndex);
-      setSelectedCard(cheatSheetData[prevIndex]);
+      setSelectedCard(prevCard);
+      setNavigationHistory([]); // Clear navigation history on standard navigation
+      updateURL(prevCard.id);
     }
   };
 
@@ -57,6 +124,7 @@ export default function Home() {
         <MasonryGrid 
           items={cheatSheetData} 
           onCardExpand={handleCardExpand}
+          onLinkClick={handleLinkClick}
         />
       </main>
 
@@ -70,6 +138,9 @@ export default function Home() {
           onPrevious={handlePrevious}
           currentIndex={selectedIndex}
           totalItems={cheatSheetData.length}
+          onLinkClick={handleLinkClick}
+          onBack={handleBackClick}
+          hasNavigationHistory={navigationHistory.length > 0}
         />
       )}
 

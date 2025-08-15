@@ -6,10 +6,9 @@ export interface CheatSheetItem {
 
 export const cheatSheetData: CheatSheetItem[] = [
   {
-    id: 'base-models',
+    id: 'basic-models',
     title: 'Basic models',
-    content: `Original "ChatGPT moment" style models. These days referred to sometimes as "Fast" models. \n\n
-    Input prompt, generates response. \n\n Single-shot, multi-shot prompting (see prompt engineering). \n\n How do they work? See Models & Inference. See also: Reasoning models, Model Systems.`,
+    content: `Original "ChatGPT moment" style models. "Quick answer" models. Input text or media and it directly outputs text or media. \n\n **Important:** All of the modern AI tooling/applications is built on cycles of text in/text out—there is **no** magic beyond this! See [Architecture of AI applications](ai-app-architecture). \n\n Single-shot, multi-shot prompting (see [prompt engineering](prompt-engineering)). \n\n How do they work? See [Models & Inference](models-inference).\n\n  See also: [Reasoning models](reasoning-models), [Model Systems](model-systems)`,
   },
   {
     id: 'models-inference',
@@ -30,12 +29,11 @@ export const cheatSheetData: CheatSheetItem[] = [
   {
     id: 'context',
     title: 'Context',
-    content: `It depends on the context 😭.
+    content: `The definition depends on the context 😭.
 
-- in application contexts the final text received by models for inference is e.g. user entered text + system prompt (program defined) + conversation history. "Context" can be any part of the final text that informs the response such as "You are a chatbot for XYZ corp", or "I have now successfully logged in".
-- It may also refer to all of the final text, e.g. in reference to context windows.
-- Synonymous with "system prompt" with reference to program design (as illustrated in the next point).
-- Applications may dynamically add to the context based on user prompts e.g. via RAG, or context engines, or codebase indexes. Context is also used to enable tool calling simply by describing how tool calling works - see tool calling.`,
+- in an application development setting the final text sent to models for inference is e.g. user entered text + system prompt (program defined) + conversation history. "Context" can be any part of the final text that informs the response such as "You are a chatbot for XYZ corp", or "I have now successfully logged in".
+- It may also refer to all of the final text, e.g. in reference to [context windows](context-window).
+- Applications may dynamically add to the context based on user prompts e.g. via [RAG](rag), or context engines, or codebase indexes. Context is also used to enable [tool calling](tool-calling) simply by describing how tool calling works - see [tool calling](tool-calling).`,
   },
   {
     id: 'context-window',
@@ -45,7 +43,7 @@ export const cheatSheetData: CheatSheetItem[] = [
   {
     id: 'rag',
     title: 'RAG (Retrieval Augmented Generation)',
-    content: `Before handing input text to a model, query some datasource ("retrieve"), and add the query result to the context to "augment the generation". This can be done directly by the program processing the user prompt, or by letting the model itself decide to call a tool - see tool calling.
+    content: `Before handing input text to a model, query some datasource ("retrieve"), and add the query result to the context to "augment the generation". This can be done directly by the program processing the user prompt, or by letting the model itself decide to call a tool - see [tool calling](tool-calling).
 
 **Example:** User sends prompt: what is the best restaurant in Siciliy? => This prompt is sent to a vector database using "similarity search" (pre ChatGPT moment tech) which returns snippets like "Ristorante Duomo has Two Michelin stars". The final model prompt is "System: utilise the following context when answering the users's query: "Ristorante Duomo has Two Michelin stars". User: What is the best restaurant in Sicily?". Response: Ristorante Duomo, with Two Michelin stars may be considered the best, or one of the best restaurants in Sicily.`,
   },
@@ -55,7 +53,7 @@ export const cheatSheetData: CheatSheetItem[] = [
     content: `A programmatic arrangement between a model and the program described in the context that tells a model to emit structured response text (JSON, XML) which can be used by the program as parameters when calling a native function.
 
 **Example:**
-1. Program calls model with: "Context: To find the timezone of a city, respond with <tz_finder>{cityName}</tz_finder>. User Prompt: "What's the timezone of Sicily"".
+1. Program calls model with: "Context: To find the timezone of a city, respond with \`<tz_finder>{cityName}</tz_finder>\`. User Prompt: "What's the timezone of Sicily"".
 2. Model responds: \`<tz_finder>Sicily</tz_finder>\`.
 3. Program parses response and calls some \`findTimezone("Sicily")\` function.
 4. Program calls model: Conversation history: ["...original message", "tool call", "tool call result: GMT+2"].
@@ -64,7 +62,7 @@ export const cheatSheetData: CheatSheetItem[] = [
 **Note:** In the above example, the program designer has described the programmatic arrangement for tool calling to the model. This is not inappropriate, but the major AI models already include standard tool calling protocols that they inject into AI model prompts, exposed by their apis where you can register the tools you support, and their parameters, to be called in a standard fashion. Most AI SDKs then support auto-handling steps 2,3,4, so that it seems like 1. -> 5. directly.
 
 **Note:** Tool calling can be used for:
-- Model directed context expansion (as in above example, where model decides it needs more info). Aka RAG via tool calling.
+- Model directed context expansion (as in above example, where model decides it needs more info). Aka [RAG](rag) via tool calling.
 - Performing real world actions e.g. \`{ tool: "sendEmail", params: { subject: "AI", body: "Hi Sam..." } }\`.`,
   },
   {
@@ -84,7 +82,7 @@ export const cheatSheetData: CheatSheetItem[] = [
   {
     id: 'context-engineering',
     title: 'Context Engineering',
-    content: `Is to AI agents what prompt engineering is to AI models. The difference is that prompt text is ALWAYS included in AI model inference, whereas context engineering includes exposing context that is discoverable, e.g. via convention or tool use.
+    content: `Is to [AI agents](ai-agents) what [prompt engineering](prompt-engineering) is to AI models. The difference is that prompt text is ALWAYS included in AI model inference, whereas context engineering includes exposing context that is discoverable, e.g. via convention or tool use.
 
 **Example:** "Agent.MD" file in a project is included by many agents, and may contain instructions like "If the task relates to i18n, read i18n.md". The agent will use a file read tool to expand it's context.`,
   },
@@ -95,7 +93,7 @@ export const cheatSheetData: CheatSheetItem[] = [
 
 A program might accept configurations of MCP servers through some JSON file. The program connects to those MCP servers which state "I have these tools, documents, & suggested prompts". The program can then decide to inject that retrieved information into the context when doing model calls. For example: \`tools: [{ "name": "mcp_server_a_tool_name", ....}]\`.
 
-From the end user perspective, MCP is a kind of standardised context engineering.
+From the end user perspective, MCP is a kind of standardised [context engineering](context-engineering).
 
 **Example:** You can configure your dev agent with the https://context7.com/ MCP server. After this if you are working on a Shopify project, you can ask the agent to query the Shopify docs via context7 before performing a task so it has up to date information.`,
   },
@@ -146,5 +144,10 @@ From the end user perspective, MCP is a kind of standardised context engineering
     id: 'calling-ai-models',
     title: 'Calling AI models programatically',
     content: 'Can be done by each vendors API, or via universal SDKs like ai-sdk - be warned: vendor differences still necessarily leak through!',
-  }
+  },
+    {
+    id: 'ai-app-architecture',
+    title: 'Architecture of AI applications',
+    content: `![AI Application Architecture](/aiapparchitecture.png)`,
+  },
 ];

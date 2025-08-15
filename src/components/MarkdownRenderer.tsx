@@ -2,15 +2,17 @@ import React from 'react';
 
 interface MarkdownRendererProps {
   content: string;
+  onLinkClick?: (cardId: string) => void;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClick }) => {
   const renderMarkdown = (text: string): JSX.Element => {
-    const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\n\n)/g);
-    
+    const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|!\[[^\]]*\]\([^)]+\)|\n\n)/g);
+
     return (
       <>
         {parts.map((part, index) => {
+          if (!part) return null;
           if (part.startsWith('**') && part.endsWith('**')) {
             return (
               <strong key={index} className="font-semibold text-blue-600 dark:text-blue-400">
@@ -28,6 +30,40 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             );
           } else if (part === '\n\n') {
             return <br key={index} className="block mb-3" />;
+          } else if (part.match(/!\[[^\]]*\]\([^)]+\)/)) {
+            const match = part.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+            if (match) {
+              const [, alt, src] = match;
+              return (
+                <div key={index} className="my-6 flex justify-center">
+                  <img
+                    src={src}
+                    alt={alt}
+                    className="max-w-full h-auto rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+                  />
+                </div>
+              );
+            }
+            return <span key={index}>{part}</span>;
+          } else if (part.match(/\[([^\]]+)\]\(([^)]+)\)/)) {
+            const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
+            if (match && onLinkClick) {
+              const [, linkText, cardId] = match;
+              return (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onLinkClick(cardId);
+                  }}
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 decoration-dotted decoration-1 underline decoration-gray-300 dark:decoration-gray-600 hover:decoration-blue-500 underline-offset-2 transition-all duration-200"
+                >
+                  {linkText}
+                </button>
+              );
+            } else {
+              return <span key={index}>{part}</span>;
+            }
           } else {
             return <span key={index}>{part}</span>;
           }
@@ -37,7 +73,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   };
 
   const lines = content.split('\n');
-  
+
   return (
     <div className="space-y-2">
       {lines.map((line, index) => {

@@ -12,6 +12,9 @@ interface CardModalProps {
   onPrevious: () => void;
   currentIndex: number;
   totalItems: number;
+  onLinkClick?: (cardId: string) => void;
+  onBack?: () => void;
+  hasNavigationHistory: boolean;
 }
 
 const CardModal: React.FC<CardModalProps> = ({
@@ -22,6 +25,9 @@ const CardModal: React.FC<CardModalProps> = ({
   onPrevious,
   currentIndex,
   totalItems,
+  onLinkClick,
+  onBack,
+  hasNavigationHistory,
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -129,6 +135,17 @@ const CardModal: React.FC<CardModalProps> = ({
           rounded-2xl border-2 shadow-2xl p-8 transition-all duration-300 min-h-[45vh] flex flex-col
           ${getCardColor(currentIndex)}
         `}>
+          {/* Back Button */}
+          {hasNavigationHistory && onBack && (
+            <button
+              onClick={onBack}
+              className="absolute top-3 left-3 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors opacity-60 hover:opacity-100"
+              title="Go back to previous card"
+            >
+              <span className="text-lg text-gray-500 dark:text-gray-400">←</span>
+            </button>
+          )}
+
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -149,7 +166,7 @@ const CardModal: React.FC<CardModalProps> = ({
 
               {/* Content */}
               <div className="text-base text-gray-700 dark:text-gray-300 font-content leading-relaxed">
-                <MarkdownRenderer content={item.content} />
+                <MarkdownRenderer content={item.content} onLinkClick={onLinkClick} />
               </div>
             </div>
 

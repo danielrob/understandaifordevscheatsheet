@@ -7,9 +7,10 @@ import CheatSheetCard from './CheatSheetCard';
 interface MasonryGridProps {
   items: CheatSheetItem[];
   onCardExpand: (item: CheatSheetItem, index: number) => void;
+  onLinkClick?: (cardId: string) => void;
 }
 
-const MasonryGrid: React.FC<MasonryGridProps> = ({ items, onCardExpand }) => {
+const MasonryGrid: React.FC<MasonryGridProps> = ({ items, onCardExpand, onLinkClick }) => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [columns, setColumns] = useState(3);
 
@@ -34,12 +35,10 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ items, onCardExpand }) => {
 
   const distributeItemsToColumns = () => {
     const columnArrays: CheatSheetItem[][] = Array.from({ length: columns }, () => []);
-    const columnHeights = Array(columns).fill(0);
-
-    items.forEach((item) => {
-      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-      columnArrays[shortestColumnIndex].push(item);
-      columnHeights[shortestColumnIndex] += item.content.length;
+    
+    items.forEach((item, index) => {
+      const columnIndex = index % columns;
+      columnArrays[columnIndex].push(item);
     });
 
     return columnArrays;
@@ -64,6 +63,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ items, onCardExpand }) => {
                   }}
                   isHovered={hoveredCard === item.id}
                   onHover={(hovered) => setHoveredCard(hovered ? item.id : null)}
+                  onLinkClick={onLinkClick}
                 />
               );
             })}
