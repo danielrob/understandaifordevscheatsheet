@@ -3,11 +3,12 @@ import React from 'react';
 interface MarkdownRendererProps {
   content: string;
   onLinkClick?: (cardId: string) => void;
+  onImageClick?: (src: string, alt: string) => void;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClick }) => {
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClick, onImageClick }) => {
   const renderMarkdown = (text: string): JSX.Element => {
-    const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|!\[[^\]]*\]\([^)]+\)|\n\n)/g);
+    const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|!\[[^\]]*\]\([^)]+\)|\n\n)/g);
 
     return (
       <>
@@ -18,6 +19,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClic
               <strong key={index} className="font-semibold text-blue-600 dark:text-blue-400">
                 {part.slice(2, -2)}
               </strong>
+            );
+          } else if (part.startsWith('*') && part.endsWith('*') && !part.startsWith('**')) {
+            return (
+              <em key={index} className="italic">
+                {part.slice(1, -1)}
+              </em>
             );
           } else if (part.startsWith('`') && part.endsWith('`')) {
             return (
@@ -39,7 +46,8 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClic
                   <img
                     src={src}
                     alt={alt}
-                    className="max-w-full h-auto rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+                    onClick={() => onImageClick && onImageClick(src, alt)}
+                    className="max-w-full h-auto rounded-lg shadow-md border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg transition-shadow"
                   />
                 </div>
               );
@@ -82,6 +90,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onLinkClic
             <div key={index} className="flex items-start space-x-2">
               <span className="text-indigo-500 dark:text-indigo-400 mt-1 text-sm">•</span>
               <div className="flex-1">{renderMarkdown(line.slice(2))}</div>
+            </div>
+          );
+        } else if (line.match(/^  - /)) {
+          // Handle nested list items with 2-space indentation
+          return (
+            <div key={index} className="flex items-start space-x-2 ml-6">
+              <span className="text-indigo-500 dark:text-indigo-400 mt-1 text-sm">◦</span>
+              <div className="flex-1">{renderMarkdown(line.slice(4))}</div>
             </div>
           );
         } else if (line.match(/^\d+\./)) {

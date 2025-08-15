@@ -6,6 +6,7 @@ import { cheatSheetData, CheatSheetItem } from '@/data/cheatsheet';
 import MasonryGrid from '@/components/MasonryGrid';
 import CardModal from '@/components/CardModal';
 import DarkModeToggle from '@/components/DarkModeToggle';
+import ImageLightbox from '@/components/ImageLightbox';
 
 function HomeContent() {
   const router = useRouter();
@@ -14,6 +15,7 @@ function HomeContent() {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
 
   // Initialize state from URL on component mount
   useEffect(() => {
@@ -105,10 +107,18 @@ function HomeContent() {
     }
   };
 
+  const handleImageClick = (src: string, alt: string) => {
+    setLightboxImage({ src, alt });
+  };
+
+  const handleLightboxClose = () => {
+    setLightboxImage(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
       <DarkModeToggle />
-      
+
       {/* Header */}
       <header className="text-center py-12 px-4">
         <h1 className="text-5xl md:text-6xl font-whimsy font-bold text-gray-800 dark:text-gray-100 mb-4">
@@ -121,8 +131,8 @@ function HomeContent() {
 
       {/* Main Content */}
       <main>
-        <MasonryGrid 
-          items={cheatSheetData} 
+        <MasonryGrid
+          items={cheatSheetData}
           onCardExpand={handleCardExpand}
           onLinkClick={handleLinkClick}
         />
@@ -141,6 +151,17 @@ function HomeContent() {
           onLinkClick={handleLinkClick}
           onBack={handleBackClick}
           hasNavigationHistory={navigationHistory.length > 0}
+          onImageClick={handleImageClick}
+        />
+      )}
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <ImageLightbox
+          src={lightboxImage.src}
+          alt={lightboxImage.alt}
+          isOpen={true}
+          onClose={handleLightboxClose}
         />
       )}
 
@@ -156,7 +177,7 @@ function LoadingFallback() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
       <DarkModeToggle />
-      
+
       {/* Header */}
       <header className="text-center py-12 px-4">
         <h1 className="text-5xl md:text-6xl font-whimsy font-bold text-gray-800 dark:text-gray-100 mb-4">

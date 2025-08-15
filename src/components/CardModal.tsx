@@ -15,6 +15,7 @@ interface CardModalProps {
   onLinkClick?: (cardId: string) => void;
   onBack?: () => void;
   hasNavigationHistory: boolean;
+  onImageClick?: (src: string, alt: string) => void;
 }
 
 const CardModal: React.FC<CardModalProps> = ({
@@ -28,6 +29,7 @@ const CardModal: React.FC<CardModalProps> = ({
   onLinkClick,
   onBack,
   hasNavigationHistory,
+  onImageClick,
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -166,7 +168,7 @@ const CardModal: React.FC<CardModalProps> = ({
 
               {/* Content */}
               <div className="text-base text-gray-700 dark:text-gray-300 font-content leading-relaxed">
-                <MarkdownRenderer content={item.content} onLinkClick={onLinkClick} />
+                <MarkdownRenderer content={item.content} onLinkClick={onLinkClick} onImageClick={onImageClick} />
               </div>
             </div>
 

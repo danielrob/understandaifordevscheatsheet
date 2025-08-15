@@ -43,9 +43,14 @@ export const cheatSheetData: CheatSheetItem[] = [
   {
     id: 'rag',
     title: 'RAG (Retrieval Augmented Generation)',
-    content: `Before handing input text to a model, query some datasource ("retrieve"), and add the query result to the context to "augment the generation". This can be done directly by the program processing the user prompt, or by letting the model itself decide to call a tool - see [tool calling](tool-calling).
+    content: `Before handing input text to a model, query some datasource ("retrieve"), and add the query result to the context to "augment the generation". This can be done directly by the program processing the user prompt, or by letting the model itself decide to do call a tool—see [tool calling](tool-calling).
 
-**Example:** User sends prompt: what is the best restaurant in Siciliy? => This prompt is sent to a vector database using "similarity search" (pre ChatGPT moment tech) which returns snippets like "Ristorante Duomo has Two Michelin stars". The final model prompt is "System: utilise the following context when answering the users's query: "Ristorante Duomo has Two Michelin stars". User: What is the best restaurant in Sicily?". Response: Ristorante Duomo, with Two Michelin stars may be considered the best, or one of the best restaurants in Sicily.`,
+**Example workflow:**
+1. *User prompt:* "What is the best restaurant in Sicily?"
+2. *Retrieval:* Prompt sent to vector database using similarity search (pre-ChatGPT tech)
+3. *Results:* Database returns snippets like "Ristorante Duomo has Two Michelin stars"
+4. *Augmented prompt:* "System: utilize the following context when answering the user's query: 'Ristorante Duomo has Two Michelin stars'. User: What is the best restaurant in Sicily?"
+5. *Response:* "Ristorante Duomo, with Two Michelin stars, may be considered the best, or one of the best restaurants in Sicily."`,
   },
   {
     id: 'tool-calling',
@@ -119,10 +124,10 @@ From the end user perspective, MCP is a kind of standardised [context engineerin
 - Tab to move to next predicted task.
 - Inline prompting (AI chat against a single file).
 - Agent modes:
-   - developer agent
-   - ask agents?
-   - planning agent?
-   - custom agents?`,
+  - developer agent
+  - ask agents?
+  - planning agent?
+  - custom agents?`,
   },
   {
     id: 'reasoning-models',
