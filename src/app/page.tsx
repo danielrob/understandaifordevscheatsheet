@@ -120,12 +120,12 @@ function HomeContent() {
       <DarkModeToggle />
 
       {/* Header */}
-      <header className="text-center py-12 px-4">
+      <header className="text-center pt-12 pb-4 px-4">
         <h1 className="text-5xl md:text-6xl font-whimsy font-bold text-gray-800 dark:text-gray-100 mb-4">
           🤖 Understand AI for Devs
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          A developer&apos;s cheat sheet to understanding AI concepts, tools, and best practices
+          A developer&apos;s cheat sheet to understanding AI concepts & tooling
         </p>
       </header>
 

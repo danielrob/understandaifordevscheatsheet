@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Understand AI for Devs - Cheat Sheet",
-  description: "A comprehensive cheat sheet for developers to understand AI concepts, tools, and practices",
+  description: "A comprehensive cheat sheet for developers to understand AI concepts & tooling",
   icons: {
     icon: '/favicon.svg',
   },
