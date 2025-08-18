@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { EVENTS } from '@/lib/analytics';
 
 const DarkModeToggle: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
+  const { track } = useAnalytics();
 
   useEffect(() => {
     const stored = localStorage.getItem('darkMode');
@@ -19,6 +22,12 @@ const DarkModeToggle: React.FC = () => {
     setIsDark(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
     document.documentElement.classList.toggle('dark', newDarkMode);
+    
+    // Track theme toggle
+    track(EVENTS.THEME_TOGGLE, {
+      theme: newDarkMode ? 'dark' : 'light',
+      previousTheme: isDark ? 'dark' : 'light'
+    });
   };
 
   return (

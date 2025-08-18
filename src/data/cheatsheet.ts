@@ -31,8 +31,8 @@ export const cheatSheetData: CheatSheetItem[] = [
     title: 'Context',
     content: `The definition depends on the context 😭.
 
-- in an application development setting the final text sent to models for inference is e.g. user entered text + system prompt (program defined) + conversation history. "Context" can be any part of the final text that informs the response such as "You are a chatbot for XYZ corp", or "I have now successfully logged in".
-- It may also refer to all of the final text, e.g. in reference to [context windows](context-window).
+- during inference, the context is the input for which the model must generate the next word.
+- from an application development perspective, the final text sent to models for inference is e.g. user entered text + system prompt + conversation history. "Context" can be any part of the final text that informs the response such as "You are a chatbot for XYZ corp", "the user has logged in".
 - Applications may dynamically add to the context based on user prompts e.g. via [RAG](rag), or context engines, or codebase indexes. Context is also used to enable [tool calling](tool-calling) simply by describing how tool calling works - see [tool calling](tool-calling).`,
   },
   {
@@ -113,7 +113,8 @@ From the end user perspective, MCP is a kind of standardised [context engineerin
 - Context window compression: otherwise as the conversation history grows, the models can lose focus/forget instructions. Also for cost reduction.
 - Workflow: Editor blocking / non-blocking / remote.
 - Diffing mechanisms - escapable? (Git is enough!)
-- Yolo friendliness. Can you just let the agent go at it without manual intervention?
+- Yolo friendliness. Can you just let the agent go at it without manual intervention? E.g. \`
+claude --dangerously-skip-permissions\`
 - multimodal input support (images, figma files).
 - use of pre-defined outputs (e.g. orchids.app)`,
   },

@@ -7,6 +7,8 @@ import MasonryGrid from '@/components/MasonryGrid';
 import CardModal from '@/components/CardModal';
 import DarkModeToggle from '@/components/DarkModeToggle';
 import ImageLightbox from '@/components/ImageLightbox';
+import { usePageTracking, useAnalytics } from '@/hooks/useAnalytics';
+import { EVENTS } from '@/lib/analytics';
 
 function HomeContent() {
   const router = useRouter();
@@ -16,6 +18,12 @@ function HomeContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
+  
+  // Initialize analytics
+  const { track } = useAnalytics();
+  
+  // Track page views automatically
+  usePageTracking({ includeSearchParams: true });
 
   // Initialize state from URL on component mount
   useEffect(() => {
@@ -27,9 +35,16 @@ function HomeContent() {
         setSelectedCard(card);
         setSelectedIndex(cardIndex);
         setIsModalOpen(true);
+        
+        // Track card view from URL
+        track(EVENTS.CHEAT_SHEET_VIEW, {
+          cardId: card.id,
+          cardTitle: card.title,
+          source: 'direct-link'
+        });
       }
     }
-  }, [searchParams]);
+  }, [searchParams, track]);
 
   const updateURL = (cardId: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -47,6 +62,14 @@ function HomeContent() {
     setIsModalOpen(true);
     setNavigationHistory([]); // Clear navigation history on direct card expansion
     updateURL(item.id);
+    
+    // Track card expansion
+    track(EVENTS.CHEAT_SHEET_EXPAND, {
+      cardId: item.id,
+      cardTitle: item.title,
+      cardIndex: index,
+      source: 'card-click'
+    });
   };
 
   const handleLinkClick = (cardId: string) => {
@@ -61,10 +84,27 @@ function HomeContent() {
       setSelectedIndex(cardIndex);
       setIsModalOpen(true);
       updateURL(cardId);
+      
+      // Track internal navigation
+      track(EVENTS.CHEAT_SHEET_VIEW, {
+        cardId: card.id,
+        cardTitle: card.title,
+        cardIndex: cardIndex,
+        source: 'internal-link',
+        fromCard: selectedCard?.id
+      });
     }
   };
 
   const handleCloseModal = () => {
+    // Track modal close
+    if (selectedCard) {
+      track(EVENTS.MODAL_CLOSE, {
+        cardId: selectedCard.id,
+        cardTitle: selectedCard.title
+      });
+    }
+    
     setIsModalOpen(false);
     setSelectedCard(null);
     setNavigationHistory([]);  // Clear navigation history when closing modal
@@ -81,6 +121,13 @@ function HomeContent() {
         setSelectedIndex(cardIndex);
         setNavigationHistory(prev => prev.slice(0, -1)); // Remove last item from history
         updateURL(previousCardId);
+        
+        // Track back navigation
+        track('navigation-back', {
+          cardId: card.id,
+          cardTitle: card.title,
+          fromCard: selectedCard?.id
+        });
       }
     }
   };
@@ -93,6 +140,14 @@ function HomeContent() {
       setSelectedCard(nextCard);
       setNavigationHistory([]); // Clear navigation history on standard navigation
       updateURL(nextCard.id);
+      
+      // Track next navigation
+      track('navigation-next', {
+        cardId: nextCard.id,
+        cardTitle: nextCard.title,
+        fromCard: selectedCard?.id,
+        direction: 'next'
+      });
     }
   };
 
@@ -104,11 +159,26 @@ function HomeContent() {
       setSelectedCard(prevCard);
       setNavigationHistory([]); // Clear navigation history on standard navigation
       updateURL(prevCard.id);
+      
+      // Track previous navigation
+      track('navigation-previous', {
+        cardId: prevCard.id,
+        cardTitle: prevCard.title,
+        fromCard: selectedCard?.id,
+        direction: 'previous'
+      });
     }
   };
 
   const handleImageClick = (src: string, alt: string) => {
     setLightboxImage({ src, alt });
+    
+    // Track image view
+    track(EVENTS.IMAGE_VIEW, {
+      imageSrc: src,
+      imageAlt: alt,
+      fromCard: selectedCard?.id
+    });
   };
 
   const handleLightboxClose = () => {
